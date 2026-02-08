@@ -26,17 +26,15 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
       max-width: 400px;
       width: 90%;
-    }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 30px;
-    }
-
-    .buttons {
       position: relative;
-      height: 80px;
+      z-index: 2;
     }
+
+    h1 { font-size: 28px; margin-bottom: 20px; }
+
+    #countdown { font-size: 16px; margin-bottom: 20px; opacity: 0.9; }
+
+    .buttons { position: relative; height: 80px; }
 
     button {
       border: none;
@@ -48,60 +46,49 @@
       position: absolute;
     }
 
-    #yesBtn {
-      background: #00ff88;
-      color: black;
-      left: 40px;
-    }
+    #yesBtn { background: #00ff88; color: black; left: 40px; }
+    #noBtn { background: #ff3b3b; color: white; right: 40px; }
 
-    #noBtn {
-      background: #ff3b3b;
-      color: white;
-      right: 40px;
-    }
+    #videoContainer { display: none; margin-top: 20px; animation: fadeIn 1s ease forwards; }
 
-    #videoContainer {
-      display: none;
-      margin-top: 20px;
-      animation: fadeIn 1s ease forwards;
-    }
+    video { width: 100%; border-radius: 15px; }
 
-    video {
-      width: 100%;
-      border-radius: 15px;
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9);} to { opacity: 1; transform: scale(1);} }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .hearts {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
+    .hearts, .fireworks {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; overflow: hidden; z-index: 1;
     }
 
     .heart {
-      position: absolute;
-      color: #ff004c;
-      font-size: 20px;
-      animation: floatUp 6s linear infinite;
+      position: absolute; color: #ff004c; font-size: 20px; animation: floatUp 6s linear infinite;
     }
 
     @keyframes floatUp {
       0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
       100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
     }
+
+    .firework {
+      position: absolute; width: 6px; height: 6px; background: yellow; border-radius: 50%;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      to { transform: translate(var(--x), var(--y)); opacity: 0; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Romantic background music -->
+  <audio id="bgMusic" loop>
+    <source src="romantic-music.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="card">
-    <h1>Meghana ❤️<br />Will you be my Valentine?</h1>
+    <h1>Meghana ❤️<br>Will you be my Valentine?</h1>
+    <div id="countdown"></div>
 
     <div class="buttons">
       <button id="yesBtn">Yes 😍</button>
@@ -111,22 +98,41 @@
     <div id="videoContainer">
       <p><b>This is the best decision you ever made 😎❤️</b></p>
       <video id="valVideo" controls>
-        <source src="funny-valentine.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
+        <source src="funny-valentine.mp4" type="video/mp4">
       </video>
     </div>
   </div>
 
   <div class="hearts" id="hearts"></div>
+  <div class="fireworks" id="fireworks"></div>
 
   <script>
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const videoContainer = document.getElementById('videoContainer');
     const hearts = document.getElementById('hearts');
+    const fireworks = document.getElementById('fireworks');
     const valVideo = document.getElementById('valVideo');
+    const bgMusic = document.getElementById('bgMusic');
+    const countdown = document.getElementById('countdown');
 
-    // Move "No" button away from cursor
+    // Countdown timer to forever date
+    const foreverDate = new Date("Feb 14, 2026 00:00:00").getTime();
+    setInterval(() => {
+      const now = new Date().getTime();
+      const diff = foreverDate - now;
+      if (diff <= 0) {
+        countdown.innerHTML = "Forever started ❤️";
+        return;
+      }
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff % (1000*60*60*24))/(1000*60*60));
+      const m = Math.floor((diff % (1000*60*60))/(1000*60));
+      const s = Math.floor((diff % (1000*60))/1000);
+      countdown.innerHTML = `Forever begins in ${d}d ${h}h ${m}m ${s}s ❤️`;
+    }, 1000);
+
+    // Move No button away
     noBtn.addEventListener('mouseenter', () => {
       const x = Math.random() * (window.innerWidth - 120);
       const y = Math.random() * (window.innerHeight - 120);
@@ -135,11 +141,13 @@
       noBtn.style.right = 'auto';
     });
 
-    // When Yes is clicked
+    // YES click effects
     yesBtn.addEventListener('click', () => {
       videoContainer.style.display = 'block';
-      valVideo.play().catch(() => {});
+      valVideo.play().catch(()=>{});
+      bgMusic.play().catch(()=>{});
       startHearts();
+      startFireworks();
     });
 
     function startHearts() {
@@ -147,12 +155,28 @@
         const heart = document.createElement('div');
         heart.className = 'heart';
         heart.innerText = '❤️';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+        heart.style.left = Math.random()*100 + 'vw';
+        heart.style.fontSize = Math.random()*20 + 15 + 'px';
         hearts.appendChild(heart);
-
-        setTimeout(() => heart.remove(), 6000);
+        setTimeout(()=>heart.remove(),6000);
       }, 250);
+    }
+
+    function startFireworks() {
+      setInterval(() => {
+        for(let i=0;i<20;i++){
+          const fw = document.createElement('div');
+          fw.className = 'firework';
+          const x = (Math.random()-0.5)*200 + 'px';
+          const y = (Math.random()-0.5)*200 + 'px';
+          fw.style.left = Math.random()*100 + 'vw';
+          fw.style.top = Math.random()*100 + 'vh';
+          fw.style.setProperty('--x', x);
+          fw.style.setProperty('--y', y);
+          fireworks.appendChild(fw);
+          setTimeout(()=>fw.remove(),1000);
+        }
+      }, 800);
     }
   </script>
 </body>
