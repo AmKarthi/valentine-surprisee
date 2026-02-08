@@ -63,11 +63,17 @@
     #videoContainer {
       display: none;
       margin-top: 20px;
+      animation: fadeIn 1s ease forwards;
     }
 
     video {
       width: 100%;
       border-radius: 15px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .hearts {
@@ -103,8 +109,8 @@
     </div>
 
     <div id="videoContainer">
-      <p>Best decision ever 😎❤️</p>
-      <video controls autoplay>
+      <p><b>This is the best decision you ever made 😎❤️</b></p>
+      <video id="valVideo" controls>
         <source src="funny-valentine.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
@@ -118,11 +124,12 @@
     const noBtn = document.getElementById('noBtn');
     const videoContainer = document.getElementById('videoContainer');
     const hearts = document.getElementById('hearts');
+    const valVideo = document.getElementById('valVideo');
 
     // Move "No" button away from cursor
     noBtn.addEventListener('mouseenter', () => {
-      const x = Math.random() * (window.innerWidth - 100);
-      const y = Math.random() * (window.innerHeight - 100);
+      const x = Math.random() * (window.innerWidth - 120);
+      const y = Math.random() * (window.innerHeight - 120);
       noBtn.style.left = x + 'px';
       noBtn.style.top = y + 'px';
       noBtn.style.right = 'auto';
@@ -131,6 +138,7 @@
     // When Yes is clicked
     yesBtn.addEventListener('click', () => {
       videoContainer.style.display = 'block';
+      valVideo.play().catch(() => {});
       startHearts();
     });
 
@@ -144,7 +152,7 @@
         hearts.appendChild(heart);
 
         setTimeout(() => heart.remove(), 6000);
-      }, 300);
+      }, 250);
     }
   </script>
 </body>
