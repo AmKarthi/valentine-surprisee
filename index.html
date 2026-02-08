@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will You Be My Valentine?</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: white;
+      text-align: center;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      position: relative;
+      height: 80px;
+    }
+
+    button {
+      border: none;
+      padding: 12px 22px;
+      font-size: 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: absolute;
+    }
+
+    #yesBtn {
+      background: #00ff88;
+      color: black;
+      left: 40px;
+    }
+
+    #noBtn {
+      background: #ff3b3b;
+      color: white;
+      right: 40px;
+    }
+
+    #videoContainer {
+      display: none;
+      margin-top: 20px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 15px;
+    }
+
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff004c;
+      font-size: 20px;
+      animation: floatUp 6s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Meghana ❤️<br />Will you be my Valentine?</h1>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes 😍</button>
+      <button id="noBtn">No 😜</button>
+    </div>
+
+    <div id="videoContainer">
+      <p>Best decision ever 😎❤️</p>
+      <video controls autoplay>
+        <source src="funny-valentine.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+  <div class="hearts" id="hearts"></div>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const videoContainer = document.getElementById('videoContainer');
+    const hearts = document.getElementById('hearts');
+
+    // Move "No" button away from cursor
+    noBtn.addEventListener('mouseenter', () => {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 100);
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+      noBtn.style.right = 'auto';
+    });
+
+    // When Yes is clicked
+    yesBtn.addEventListener('click', () => {
+      videoContainer.style.display = 'block';
+      startHearts();
+    });
+
+    function startHearts() {
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerText = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+        hearts.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 6000);
+      }, 300);
+    }
+  </script>
+</body>
+</html>
